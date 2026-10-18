@@ -1,3 +1,0 @@
-main
-
-feature/home-client

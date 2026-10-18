@@ -8,8 +8,8 @@
   /* ========= Brand Colors ========= */
 
   /* Deep Blue (Brand) */
-  --color-primary: #00ffdd;
-  --color-secondary: #62ff00;
+  --color-primary: #00fff7;
+  --color-secondary: #b3ff00;
 
   /* Electric Purple (CTA & Actions) */
   --color-accent: #f588ff;
@@ -18,27 +18,27 @@
   /* ========= Layout ========= */
 
   /* Entire application background */
-  --color-background: #13132a;
+  --color-background: #0b0b25;
 
   /* Header Surface background */
-  --color-surface: #3b0c2d;
+  --color-surface: #180c3b;
 
   /* Cards, forms, resume preview */
-  --color-canvas: #272730;
+  --color-canvas: #19191f;
 
   /* ========= Typography ========= */
 
-  --color-text: #ffffff;
+  --color-text: #cdf7ef;
 
   /* Secondary text */
-  --color-text-muted: #5aacff;
+  --color-text-muted: #6fb7ff;
 
   /* Button inner-text */
-  --color-text-btn: #240019;
+  --color-text-btn: #1c0011;
 
   /* ========= Borders ========= */
 
-  --color-border: rgba(65, 65, 65, 0.505);
+  --color-border: rgba(65, 65, 65, 0.651);
 
   /* ========= Status ========= */
 
@@ -56,10 +56,10 @@
 
   /* Floating card */
   --shadow-card:
-    0 14px 35px rgba(49, 50, 62, 0.997), 0 0 14px rgba(137, 113, 255, 0.08);
+    0 6px 12px rgba(49, 52, 87, 0.997), 0 0 14px rgba(137, 113, 255, 0.08);
 
   /* CTA Button */
-  --shadow-button: 0 8px 20px rgba(137, 113, 255, 0.3);
+  --shadow-button: 0 4px 10px rgba(235, 103, 255, 0.42);
 
   /* AI Glow */
   --shadow-glow: 0 0 22px rgba(137, 113, 255, 0.15);
@@ -76,7 +76,7 @@
 
 @theme {
   --color-primary: var(--color-primary);
-  --color-secondary: var(--color-secondary)
+  --color-secondary: var(--color-secondary);
   --color-surface: var(--color-surface);
   --color-accent: var(--color-accent);
   --color-accent-hover: var(--color-accent-hover);
