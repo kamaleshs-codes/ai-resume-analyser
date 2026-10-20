@@ -133,3 +133,30 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* AuthPageCardScrollBar  */
+/* ResumePilot AI — dark card scrollbar */
+.auth-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(137, 113, 255, 0.205) #1f1f30;
+}
+
+/* Chrome, Edge, and Safari */
+.auth-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.auth-scrollbar::-webkit-scrollbar-track {
+  background: #1f1f30;
+  border-radius: 999px;
+  margin-block: 8px;
+}
+
+.auth-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(137, 113, 255, 0.3);
+  border-radius: 999px;
+}
+
+.auth-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(137, 113, 255, 0.5);
+}

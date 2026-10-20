@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import Login from "../pages/auth/Login";
+
+import AuthPage from "../pages/auth/AuthPage";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
 import Home from "../pages/Home/Home";
@@ -12,7 +13,16 @@ const AppRoutes = () => {
         path='/login'
         element={
           <PublicRoute>
-            <Login />
+            <AuthPage mode='login' />
+          </PublicRoute>
+        }
+      />
+
+      <Route
+        path='/register'
+        element={
+          <PublicRoute>
+            <AuthPage mode='register' />
           </PublicRoute>
         }
       />
