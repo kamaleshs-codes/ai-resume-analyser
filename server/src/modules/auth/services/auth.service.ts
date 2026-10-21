@@ -10,27 +10,51 @@ import { AuthenticatedUser } from "../interfaces/authenticated-user.interface.ts
 export const registerUserService = async (data: RegisterRequestBody) => {
   const { username, email, password } = data;
 
+  // 1. Check whether the email or username is already registered.
   const existingUser = await User.findOne({
     $or: [{ email }, { username }],
   });
+
   if (existingUser) {
     if (existingUser.email === email) {
-      throw new AppError(409, "Email already Registered");
+      throw new AppError(409, "Email is already registered.");
     }
+
     if (existingUser.username === username) {
-      throw new AppError(409, "Username already exists");
+      throw new AppError(409, "Username already exists.");
     }
   }
 
+  // 2. Hash the password before storing it.
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser = await User.create({
-    username,
-    email,
-    password: hashedPassword,
-  });
+  // 3. Create the user and handle concurrent duplicate registrations.
+  let newUser;
+
+  try {
+    newUser = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+    });
+  } catch (error: unknown) {
+    // MongoDB duplicate-key error.
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === 11000
+    ) {
+      throw new AppError(409, "Email or username is already registered.");
+    }
+
+    // Let the global error handler process unexpected errors.
+    throw error;
+  }
+
+  // 4. Return safe user details, never the password hash.
   return {
-    id: newUser._id,
+    id: newUser._id.toString(),
     username: newUser.username,
     email: newUser.email,
   };

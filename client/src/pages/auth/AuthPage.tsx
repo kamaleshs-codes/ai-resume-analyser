@@ -146,7 +146,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
    px-4
     py-2
   '>
-                  <div className='px-1 pr-5'>
+                  <div className='pr-5'>
                     <h2 className='text-center text-3xl font-bold'>
                       {isRegister ? "Create Account" : "Welcome Back"}
                     </h2>
@@ -251,7 +251,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
                           ? "Please wait..."
                           : isRegister
                             ? "Create Account"
-                            : "Sign In"}
+                            : "Login"}
                       </Button>
                     </form>
 
@@ -281,7 +281,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
                         type='button'
                         onClick={switchMode}
                         className='font-semibold text-accent hover:underline'>
-                        {isRegister ? "Sign In" : "Register"}
+                        {isRegister ? "Login" : "Register"}
                       </button>
                     </p>
                   </div>

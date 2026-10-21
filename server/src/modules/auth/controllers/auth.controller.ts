@@ -16,7 +16,7 @@ export const registerUser = async (
     const result = await registerUserService(req.body);
     res.status(201).json({
       success: true,
-      message: "Service Connected Successfully.",
+      message: "Registration successful.",
       data: result,
     });
     return;
