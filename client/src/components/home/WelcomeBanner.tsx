@@ -5,11 +5,11 @@ const WelcomeBanner = () => {
   const { user } = useAuth();
 
   return (
-    <Card className='mx-auto mb-10 w-full'>
+    <Card shadow='inner' className='mx-auto mb-10 w-full'>
       <div className='space-y-4'>
         <h1 className='text-4xl font-bold text-secondary'>
           Welcome back,{" "}
-          <span className='text-primary whitespace-nowrap'>
+          <span className='whitespace-nowrap text-primary'>
             {user?.firstName ?? ""} {user?.lastName ?? ""}
           </span>{" "}
           👋

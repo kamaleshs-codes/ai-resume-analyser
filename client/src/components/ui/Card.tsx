@@ -1,11 +1,21 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
+type CardShadow = "inner" | "none";
+
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   className?: string;
+  shadow?: CardShadow;
 }
 
-const Card = ({ children, className = "", ...props }: CardProps) => {
+const Card = ({ children, className = "", shadow, ...props }: CardProps) => {
+  const shadowClass =
+    shadow === "inner"
+      ? "shadow-inner"
+      : shadow === "none"
+        ? "shadow-none"
+        : "shadow-card";
+
   return (
     <div
       {...props}
@@ -15,7 +25,7 @@ const Card = ({ children, className = "", ...props }: CardProps) => {
         border
         border-border
         p-8
-        shadow-(--shadow-card)
+        ${shadowClass}
         ${className}
       `}>
       {children}

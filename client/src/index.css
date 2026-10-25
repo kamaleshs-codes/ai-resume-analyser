@@ -54,15 +54,20 @@
 
   /* ========= Shadows ========= */
 
-  /* Floating card */
-  --shadow-card:
-    0 6px 12px rgba(49, 52, 87, 0.997), 0 0 14px rgba(137, 113, 255, 0.08);
+  /* Card Shadow */
+  --shadow-card-value:
+    0 6px 12px rgba(19, 24, 82, 0.997), 0 0 14px rgba(137, 113, 255, 0.08);
 
-  /* CTA Button */
-  --shadow-button: 0 4px 10px rgba(235, 103, 255, 0.42);
+  /* CTA Button Shadow */
+  --shadow-button-value: 0 4px 8px rgba(243, 164, 255, 0.42);
 
-  /* AI Glow */
-  --shadow-glow: 0 0 22px rgba(137, 113, 255, 0.15);
+  /* AI Glow Shadow */
+  --shadow-glow-value: 0 0 22px rgba(81, 212, 255, 0.338);
+
+  /* Inner Shadow */
+  --shadow-inner-value:
+    inset 0 2px 8px rgba(0, 14, 95, 0.521),
+    inset 0 -2px 6px rgba(137, 113, 255, 0.08);
 
   /* ========= Animation ========= */
 
@@ -89,6 +94,11 @@
   --color-text-btn: var(--color-text-btn);
 
   --color-border: var(--color-border);
+
+  --shadow-card: var(--shadow-card-value);
+  --shadow-button: var(--shadow-button-value);
+  --shadow-glow: var(--shadow-glow-value);
+  --shadow-inner: var(--shadow-inner-value);
 
   --color-success: var(--color-success);
   --color-warning: var(--color-warning);
