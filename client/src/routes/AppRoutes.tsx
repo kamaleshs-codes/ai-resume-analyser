@@ -3,8 +3,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "../pages/auth/AuthPage";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
-import Home from "../pages/Home/Home";
 import HomeLayout from "../layouts/HomeLayout";
+import Dashboard from "../pages/dashboard/Dashboard";
 
 const AppRoutes = () => {
   return (
@@ -29,7 +29,7 @@ const AppRoutes = () => {
 
       <Route element={<ProtectedRoute />}>
         <Route element={<HomeLayout />}>
-          <Route path='/home' element={<Home />} />
+          <Route path='/dashboard' element={<Dashboard />} />
         </Route>
       </Route>
 

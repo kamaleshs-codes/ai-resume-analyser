@@ -6,7 +6,7 @@ import FeatureCard from "../../components/home/FeatureCard";
 import StatsCard from "../../components/home/StatsCard";
 import RecentActivity from "../../components/home/RecentActivity";
 
-const Home = () => {
+const Dashboard = () => {
   const activities = [
     {
       id: 1,
@@ -114,4 +114,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Dashboard;
