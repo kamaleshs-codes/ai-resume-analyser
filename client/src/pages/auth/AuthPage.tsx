@@ -21,6 +21,8 @@ const AuthPage = ({ mode }: AuthPageProps) => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,6 +31,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loginIdentifier, setLoginIdentifier] = useState("");
 
   const isRegister = mode === "register";
 
@@ -48,6 +51,15 @@ const AuthPage = ({ mode }: AuthPageProps) => {
     );
   };
 
+  const formatName = (value: string): string => {
+    return value
+      .trim()
+      .toLowerCase()
+      .replace(/(^|[\s'-])(\p{L})/gu, (_, separator, letter) => {
+        return separator + letter.toUpperCase();
+      });
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     clearMessages();
@@ -57,17 +69,35 @@ const AuthPage = ({ mode }: AuthPageProps) => {
       return;
     }
 
+    if (isRegister) {
+      const normalizedUsername = username.trim().toLowerCase();
+
+      if (!/^[a-z][a-z0-9._]{2,29}$/.test(normalizedUsername)) {
+        setError(
+          "Username must be 3–30 characters, start with a letter, and contain only letters, numbers, underscores (_) and dots (.).",
+        );
+        return;
+      }
+    }
+
     setIsSubmitting(true);
 
     try {
       if (isRegister) {
         await registerApi({
-          username: username.trim(),
-          email: email.trim(),
+          firstName: formatName(firstName),
+          lastName: formatName(lastName),
+          username: username.trim().toLowerCase(),
+          email: email.trim().toLowerCase(),
           password,
         });
 
         setSuccess("Account created successfully. You can now sign in.");
+
+        setFirstName("");
+        setLastName("");
+        setUsername("");
+        setEmail("");
         setPassword("");
         setConfirmPassword("");
 
@@ -79,13 +109,13 @@ const AuthPage = ({ mode }: AuthPageProps) => {
       }
 
       const response = await loginApi({
-        email: email.trim(),
+        identifier: loginIdentifier.trim().toLowerCase(),
         password,
       });
 
       login(response.data.token, response.data.user);
       navigate("/home", { replace: true });
-    } catch (err) {
+    } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const data = err.response?.data;
 
@@ -109,8 +139,8 @@ const AuthPage = ({ mode }: AuthPageProps) => {
   return (
     <main className='h-dvh overflow-hidden bg-background'>
       <div className='mx-auto flex h-full w-full max-w-6xl flex-col items-center justify-center gap-6 px-4 py-4 md:flex-row md:gap-16 md:px-8 md:py-6'>
-        {/* Branding stays fixed outside the scrollable card */}
-        <section className='hidden min-w-0 flex-1 md:flex md:flex-col md:justify-center'>
+        {/* Branding */}
+        <section className='hidden min-w-0 flex-1 flex-col justify-center md:flex'>
           <h1 className='text-5xl font-bold text-primary'>ResumePilot AI</h1>
 
           <p className='mt-5 text-lg leading-8 text-text-muted'>
@@ -126,7 +156,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
           </div>
         </section>
 
-        {/* Fixed-height authentication area */}
+        {/* Authentication card */}
         <section className='flex w-full min-w-0 items-center justify-center md:w-[28rem] md:flex-none'>
           <AnimatePresence mode='wait'>
             <motion.div
@@ -136,16 +166,8 @@ const AuthPage = ({ mode }: AuthPageProps) => {
               exit={{ opacity: 0, x: -18 }}
               transition={{ duration: 0.22, ease: "easeInOut" }}
               className='flex h-full min-h-0 w-full'>
-              <Card className='flex h-120 min-h-0 w-full flex-col pr-1 overflow-hidden'>
-                {/* Only this inner area scrolls */}
-                <div
-                  className='
-    auth-scrollbar
-    min-h-0 flex-1
-    overflow-y-auto overscroll-contain
-   px-4
-    py-2
-  '>
+              <Card className='flex h-120 min-h-0 w-full flex-col overflow-hidden pr-1'>
+                <div className='auth-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-2'>
                   <div className='pr-5'>
                     <h2 className='text-center text-3xl font-bold'>
                       {isRegister ? "Create Account" : "Welcome Back"}
@@ -159,36 +181,103 @@ const AuthPage = ({ mode }: AuthPageProps) => {
 
                     <form className='mt-8 space-y-5' onSubmit={handleSubmit}>
                       {isRegister && (
-                        <FormField label='Username' htmlFor='username'>
+                        <>
+                          <FormField label='First Name' htmlFor='firstName'>
+                            <Input
+                              id='firstName'
+                              type='text'
+                              placeholder='Enter your first name'
+                              value={firstName}
+                              onChange={(event) => {
+                                setFirstName(event.target.value);
+                                clearMessages();
+                              }}
+                              required
+                              autoComplete='given-name'
+                              maxLength={50}
+                            />
+                          </FormField>
+
+                          <FormField label='Last Name' htmlFor='lastName'>
+                            <Input
+                              id='lastName'
+                              type='text'
+                              placeholder='Enter your last name'
+                              value={lastName}
+                              onChange={(event) => {
+                                setLastName(event.target.value);
+                                clearMessages();
+                              }}
+                              required
+                              autoComplete='family-name'
+                              maxLength={50}
+                            />
+                          </FormField>
+
+                          <FormField label='Username' htmlFor='username'>
+                            <Input
+                              id='username'
+                              type='text'
+                              placeholder='e.g. kamalesh_2004'
+                              value={username}
+                              onChange={(event) => {
+                                setUsername(event.target.value.toLowerCase());
+                                clearMessages();
+                              }}
+                              required
+                              autoComplete='username'
+                              minLength={3}
+                              maxLength={30}
+                              pattern='[a-zA-Z][a-zA-Z0-9._]*'
+                              title='Start with a letter. Use only letters, numbers, underscores (_) and dots (.).'
+                              aria-describedby='username-help'
+                            />
+
+                            <p
+                              id='username-help'
+                              className='mt-2 text-xs leading-5 text-text-muted'>
+                              3–30 characters. Start with a letter and use only
+                              letters, numbers, underscores (_) and dots (.).
+                              Uppercase letters are automatically converted to
+                              lowercase.
+                            </p>
+                          </FormField>
+                        </>
+                      )}
+
+                      {!isRegister ? (
+                        <FormField
+                          label='Username or Email'
+                          htmlFor='loginIdentifier'>
                           <Input
-                            id='username'
+                            id='loginIdentifier'
                             type='text'
-                            placeholder='Choose a username'
-                            value={username}
+                            placeholder='Enter your username or email'
+                            value={loginIdentifier}
                             onChange={(event) => {
-                              setUsername(event.target.value);
+                              setLoginIdentifier(event.target.value);
                               clearMessages();
                             }}
                             required
                             autoComplete='username'
                           />
                         </FormField>
+                      ) : (
+                        <FormField label='Email' htmlFor='email'>
+                          <Input
+                            id='email'
+                            type='email'
+                            placeholder='Enter your email'
+                            value={email}
+                            onChange={(event) => {
+                              setEmail(event.target.value);
+                              clearMessages();
+                            }}
+                            required
+                            autoComplete='email'
+                          />
+                        </FormField>
                       )}
-
-                      <FormField label='Email' htmlFor='email'>
-                        <Input
-                          id='email'
-                          type='email'
-                          placeholder='Enter your email'
-                          value={email}
-                          onChange={(event) => {
-                            setEmail(event.target.value);
-                            clearMessages();
-                          }}
-                          required
-                          autoComplete='email'
-                        />
-                      </FormField>
 
                       <FormField label='Password' htmlFor='password'>
                         <Input

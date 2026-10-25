@@ -134,29 +134,34 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* AuthPageCardScrollBar  */
-/* ResumePilot AI — dark card scrollbar */
-.auth-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(137, 113, 255, 0.205) #1f1f30;
-}
-
-/* Chrome, Edge, and Safari */
+/* Scrollbar width */
 .auth-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
+/* Transparent track */
 .auth-scrollbar::-webkit-scrollbar-track {
-  background: #1f1f30;
-  border-radius: 999px;
-  margin-block: 8px;
+  background: transparent;
 }
 
+/* Colored scrollbar thumb */
 .auth-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(137, 113, 255, 0.3);
+  background: rgb(2, 0, 12);
   border-radius: 999px;
 }
 
+/* Stronger thumb on hover */
 .auth-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(137, 113, 255, 0.5);
+  background: rgba(137, 113, 255, 0.75);
+}
+
+/* Color scrollbar arrow buttons where supported */
+.auth-scrollbar::-webkit-scrollbar-button {
+  background-color: #6547f7;
+}
+
+/* Firefox: thumb color first, track color second */
+.auth-scrollbar {
+  scrollbar-color: rgba(55, 54, 57, 0.815) transparent;
+  scrollbar-width: thin;
 }

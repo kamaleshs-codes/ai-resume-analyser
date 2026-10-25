@@ -3,15 +3,19 @@ import type { ReactNode } from "react";
 export interface User {
   id: string;
   username: string;
+  firstName: string;
+  lastName: string;
   email: string;
 }
 
 export interface LoginRequest {
-  email: string;
+  identifier: string;
   password: string;
 }
 
 export interface RegisterRequest {
+  firstName: string;
+  lastName: string;
   username: string;
   email: string;
   password: string;
@@ -20,6 +24,8 @@ export interface RegisterRequest {
 export interface AuthUser {
   id: string;
   username: string;
+  firstName: string;
+  lastName: string;
   email: string;
 }
 
