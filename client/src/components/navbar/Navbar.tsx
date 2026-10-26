@@ -8,7 +8,7 @@ const Navbar = () => {
   const { user, logout } = useAuth();
 
   const handleHome = () => {
-    navigate("/home");
+    navigate("/dashboard");
   };
 
   const handleLogout = () => {

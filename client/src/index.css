@@ -24,7 +24,7 @@
   --color-surface: #180c3b;
 
   /* Cards, forms, resume preview */
-  --color-canvas: #19191f;
+  --color-canvas: #16161c;
 
   /* ========= Typography ========= */
 
@@ -66,8 +66,8 @@
 
   /* Inner Shadow */
   --shadow-inner-value:
-    inset 0 2px 8px rgba(0, 14, 95, 0.521),
-    inset 0 -2px 6px rgba(137, 113, 255, 0.08);
+    inset 0 2px 10px rgba(0, 14, 95, 0.521),
+    inset 0 -2px 8px rgba(137, 113, 255, 0.08);
 
   /* ========= Animation ========= */
 

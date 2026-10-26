@@ -114,7 +114,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
       });
 
       login(response.data.token, response.data.user);
-      navigate("/home", { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const data = err.response?.data;
