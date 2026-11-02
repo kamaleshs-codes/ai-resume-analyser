@@ -22,8 +22,6 @@ export const getUserResumesService = async (userId: string) => {
 
   return resumes;
 };
-<<<<<<< HEAD
-=======
 
 export const getResumeByIdService = async (
   userId: string,
@@ -40,4 +38,3 @@ export const getResumeByIdService = async (
 
   return resume;
 };
->>>>>>> resume-builder

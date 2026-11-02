@@ -3,10 +3,7 @@ import { Router } from "express";
 import {
   createResumeController,
   getUserResumesController,
-<<<<<<< HEAD
-=======
   getResumeByIdController,
->>>>>>> resume-builder
 } from "../controllers/resume.controller.js";
 
 import { authenticate } from "../../auth/middleware/auth.middleware.js";
@@ -24,9 +21,7 @@ router.post("/", validate(createResumeSchema), createResumeController);
 // Get resumes belonging to the authenticated user.
 router.get("/", getUserResumesController);
 
-<<<<<<< HEAD
-=======
+// Get a specific resume belonging to the authenticated user.
 router.get("/:id", getResumeByIdController);
 
->>>>>>> resume-builder
 export default router;
