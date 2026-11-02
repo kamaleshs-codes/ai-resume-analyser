@@ -22,3 +22,22 @@ export const getUserResumesService = async (userId: string) => {
 
   return resumes;
 };
+<<<<<<< HEAD
+=======
+
+export const getResumeByIdService = async (
+  userId: string,
+  resumeId: string,
+) => {
+  if (!Types.ObjectId.isValid(resumeId)) {
+    return null;
+  }
+
+  const resume = await Resume.findOne({
+    _id: resumeId,
+    userId: new Types.ObjectId(userId),
+  });
+
+  return resume;
+};
+>>>>>>> resume-builder
