@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { z } from "zod";
 
 export const validate =
@@ -13,5 +13,7 @@ export const validate =
       });
       return;
     }
+    // Replace the original body with Zod's parsed and validated data.
+    req.body = result.data;
     next();
   };

@@ -4,11 +4,16 @@ import {
   createResumeController,
   getUserResumesController,
   getResumeByIdController,
+  updateResumeController,
+  deleteResumeController,
 } from "../controllers/resume.controller.js";
 
 import { authenticate } from "../../auth/middleware/auth.middleware.js";
 import { validate } from "../../../middleware/validate.middleware.js";
-import { createResumeSchema } from "../validators/resume.validator.js";
+import {
+  createResumeSchema,
+  updateResumeSchema,
+} from "../validators/resume.validator.js";
 
 const router = Router();
 
@@ -23,5 +28,9 @@ router.get("/", getUserResumesController);
 
 // Get a specific resume belonging to the authenticated user.
 router.get("/:id", getResumeByIdController);
+
+router.put("/:id", validate(updateResumeSchema), updateResumeController);
+
+router.delete("/:id", deleteResumeController);
 
 export default router;
