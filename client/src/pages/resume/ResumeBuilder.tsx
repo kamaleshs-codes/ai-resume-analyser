@@ -1,7 +1,13 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { FaSave, FaArrowLeft } from "react-icons/fa";
+import {
+  FaSave,
+  FaArrowLeft,
+  FaArrowRight,
+  FaTimes,
+  FaTrash,
+} from "react-icons/fa";
 
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
@@ -59,6 +65,7 @@ const ResumeBuilder = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [skillInput, setSkillInput] = useState("");
 
   // Load an existing resume when editing.
   useEffect(() => {
@@ -129,10 +136,27 @@ const ResumeBuilder = () => {
     }));
   };
 
-  const handleSkillsChange = (e: ChangeEvent<HTMLInputElement>) => {
+  // Add a new skill
+  const addSkill = () => {
+    const newSkill = skillInput.trim();
+    if (!newSkill) return;
+    setFormData((prev) => {
+      const alreadyExists = prev.skills.some(
+        (skill) => skill.toLowerCase() === newSkill.toLowerCase(),
+      );
+      if (alreadyExists) return prev;
+      return {
+        ...prev,
+        skills: [...prev.skills, newSkill],
+      };
+    });
+    setSkillInput("");
+  };
+  // Remove a skill
+  const removeSkill = (index: number) => {
     setFormData((prev) => ({
       ...prev,
-      skills: e.target.value.split(","),
+      skills: prev.skills.filter((_, i) => i !== index),
     }));
   };
 
@@ -345,153 +369,197 @@ const ResumeBuilder = () => {
       )}
 
       <form onSubmit={handleSubmit} className='space-y-8'>
-        <Card>
-          <h2 className='mb-6 text-xl font-semibold text-text'>
-            Resume Information
-          </h2>
+        {/* Top Form Layout */}
+        <div className='grid grid-cols-1 items-start gap-6 lg:grid-cols-2'>
+          {/* LEFT COLUMN */}
+          <div className='space-y-6'>
+            {/* Resume Information */}
+            <Card>
+              <h2 className='mb-6 text-xl font-semibold text-text'>
+                Resume Information
+              </h2>
 
-          <FormField label='Resume Title' htmlFor='title'>
-            <Input
-              id='title'
-              name='title'
-              value={formData.title}
-              onChange={handleTitleChange}
-              placeholder='e.g. Full Stack Developer Resume'
-              required
-            />
-          </FormField>
-        </Card>
+              <FormField label='Resume Title' htmlFor='title'>
+                <Input
+                  id='title'
+                  name='title'
+                  value={formData.title}
+                  onChange={handleTitleChange}
+                  placeholder='e.g. Full Stack Developer Resume'
+                  required
+                />
+              </FormField>
+            </Card>
 
-        <Card>
-          <h2 className='mb-6 text-xl font-semibold text-text'>
-            Personal Information
-          </h2>
+            {/* Professional Summary */}
+            <Card>
+              <h2 className='mb-6 text-xl font-semibold text-text'>
+                Professional Summary
+              </h2>
 
-          <div className='grid gap-5 md:grid-cols-2'>
-            <FormField label='First Name' htmlFor='firstName'>
-              <Input
-                id='firstName'
-                name='firstName'
-                value={formData.personalInfo.firstName}
-                onChange={handlePersonalInfoChange}
-                placeholder='First name'
-                required
-              />
-            </FormField>
+              <FormField label='Summary' htmlFor='professionalSummary'>
+                <textarea
+                  id='professionalSummary'
+                  name='professionalSummary'
+                  value={formData.professionalSummary}
+                  onChange={handleSummaryChange}
+                  rows={5}
+                  placeholder='Write a short professional summary...'
+                  className='w-full resize-y rounded-xl border border-border bg-canvas px-4 py-3 text-text placeholder:text-text-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20'
+                />
+              </FormField>
+            </Card>
 
-            <FormField label='Last Name' htmlFor='lastName'>
-              <Input
-                id='lastName'
-                name='lastName'
-                value={formData.personalInfo.lastName}
-                onChange={handlePersonalInfoChange}
-                placeholder='Last name'
-                required
-              />
-            </FormField>
-
-            <FormField label='Email Address' htmlFor='email'>
-              <Input
-                id='email'
-                name='email'
-                type='email'
-                value={formData.personalInfo.email}
-                onChange={handlePersonalInfoChange}
-                placeholder='your@email.com'
-                required
-              />
-            </FormField>
-
-            <FormField label='Phone Number' htmlFor='phone'>
-              <Input
-                id='phone'
-                name='phone'
-                type='tel'
-                value={formData.personalInfo.phone ?? ""}
-                onChange={handlePersonalInfoChange}
-                placeholder='Phone number'
-              />
-            </FormField>
-
-            <FormField label='Location' htmlFor='location'>
-              <Input
-                id='location'
-                name='location'
-                value={formData.personalInfo.location ?? ""}
-                onChange={handlePersonalInfoChange}
-                placeholder='City, Country'
-              />
-            </FormField>
-
-            <FormField label='LinkedIn Profile' htmlFor='linkedin'>
-              <Input
-                id='linkedin'
-                name='linkedin'
-                value={formData.personalInfo.linkedin ?? ""}
-                onChange={handlePersonalInfoChange}
-                placeholder='LinkedIn URL'
-              />
-            </FormField>
-
-            <FormField label='GitHub Profile' htmlFor='github'>
-              <Input
-                id='github'
-                name='github'
-                value={formData.personalInfo.github ?? ""}
-                onChange={handlePersonalInfoChange}
-                placeholder='GitHub URL'
-              />
-            </FormField>
-
-            <FormField label='Personal Website' htmlFor='website'>
-              <Input
-                id='website'
-                name='website'
-                value={formData.personalInfo.website ?? ""}
-                onChange={handlePersonalInfoChange}
-                placeholder='Portfolio URL'
-              />
-            </FormField>
+            {/* Technical Skills */}
+            <Card>
+              <h2 className='mb-2 text-xl font-semibold text-text'>
+                Technical Skills
+              </h2>
+              <p className='mb-6 text-sm text-text-muted'>
+                Add your technical skills individually.
+              </p>
+              <FormField label='Skills' htmlFor='skills'>
+                {/* Skill Input */}
+                <div className='flex items-center gap-2'>
+                  <div className='min-w-0 flex-1'>
+                    <Input
+                      id='skills'
+                      name='skills'
+                      value={skillInput}
+                      onChange={(e) => setSkillInput(e.target.value)}
+                      placeholder='Enter a skill (e.g. React)'
+                    />
+                  </div>
+                  <button
+                    type='button'
+                    onClick={addSkill}
+                    disabled={!skillInput.trim()}
+                    aria-label='Add skill'
+                    className='flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent text-text-btn transition-all hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40'>
+                    <FaArrowRight size={16} />
+                  </button>
+                </div>
+              </FormField>
+              {/* Added Skill Labels */}
+              {formData.skills.length > 0 && (
+                <div className='mt-5 flex flex-wrap gap-2'>
+                  {formData.skills.map((skill, index) => (
+                    <div
+                      key={`${skill}-${index}`}
+                      className='flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-2 text-sm text-text'>
+                      <span>{skill}</span>
+                      <button
+                        type='button'
+                        onClick={() => removeSkill(index)}
+                        aria-label={`Remove ${skill}`}
+                        className='flex items-center justify-center text-text-muted transition-colors hover:text-error'>
+                        <FaTimes size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {formData.skills.length === 0 && (
+                <p className='mt-4 text-xs text-text-muted'>
+                  No skills added yet.
+                </p>
+              )}
+            </Card>
           </div>
-        </Card>
 
-        <Card>
-          <h2 className='mb-6 text-xl font-semibold text-text'>
-            Professional Summary
-          </h2>
+          {/* RIGHT COLUMN - PERSONAL INFORMATION */}
+          <Card>
+            <h2 className='mb-6 text-xl font-semibold text-text'>
+              Personal Information
+            </h2>
 
-          <FormField label='Summary' htmlFor='professionalSummary'>
-            <textarea
-              id='professionalSummary'
-              name='professionalSummary'
-              value={formData.professionalSummary}
-              onChange={handleSummaryChange}
-              rows={5}
-              placeholder='Write a short professional summary...'
-              className='w-full resize-y rounded-xl border border-border bg-canvas px-4 py-3 text-text placeholder:text-text-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20'
-            />
-          </FormField>
-        </Card>
+            <div className='grid grid-cols-1 gap-5'>
+              <FormField label='First Name' htmlFor='firstName'>
+                <Input
+                  id='firstName'
+                  name='firstName'
+                  value={formData.personalInfo.firstName}
+                  onChange={handlePersonalInfoChange}
+                  placeholder='First name'
+                  required
+                />
+              </FormField>
 
-        <Card>
-          <h2 className='mb-2 text-xl font-semibold text-text'>
-            Technical Skills
-          </h2>
+              <FormField label='Last Name' htmlFor='lastName'>
+                <Input
+                  id='lastName'
+                  name='lastName'
+                  value={formData.personalInfo.lastName}
+                  onChange={handlePersonalInfoChange}
+                  placeholder='Last name'
+                  required
+                />
+              </FormField>
 
-          <p className='mb-6 text-sm text-text-muted'>
-            Separate each skill with a comma.
-          </p>
+              <FormField label='Email Address' htmlFor='email'>
+                <Input
+                  id='email'
+                  name='email'
+                  type='email'
+                  value={formData.personalInfo.email}
+                  onChange={handlePersonalInfoChange}
+                  placeholder='your@email.com'
+                  required
+                />
+              </FormField>
 
-          <FormField label='Skills' htmlFor='skills'>
-            <Input
-              id='skills'
-              name='skills'
-              value={formData.skills.join(", ")}
-              onChange={handleSkillsChange}
-              placeholder='React, TypeScript, Node.js, MongoDB'
-            />
-          </FormField>
-        </Card>
+              <FormField label='Phone Number' htmlFor='phone'>
+                <Input
+                  id='phone'
+                  name='phone'
+                  type='tel'
+                  value={formData.personalInfo.phone ?? ""}
+                  onChange={handlePersonalInfoChange}
+                  placeholder='Phone number'
+                />
+              </FormField>
+
+              <FormField label='Location' htmlFor='location'>
+                <Input
+                  id='location'
+                  name='location'
+                  value={formData.personalInfo.location ?? ""}
+                  onChange={handlePersonalInfoChange}
+                  placeholder='City, Country'
+                />
+              </FormField>
+
+              <FormField label='LinkedIn Profile' htmlFor='linkedin'>
+                <Input
+                  id='linkedin'
+                  name='linkedin'
+                  value={formData.personalInfo.linkedin ?? ""}
+                  onChange={handlePersonalInfoChange}
+                  placeholder='LinkedIn URL'
+                />
+              </FormField>
+
+              <FormField label='GitHub Profile' htmlFor='github'>
+                <Input
+                  id='github'
+                  name='github'
+                  value={formData.personalInfo.github ?? ""}
+                  onChange={handlePersonalInfoChange}
+                  placeholder='GitHub URL'
+                />
+              </FormField>
+              <FormField label='Personal Website' htmlFor='website'>
+                <Input
+                  id='website'
+                  name='website'
+                  value={formData.personalInfo.website ?? ""}
+                  onChange={handlePersonalInfoChange}
+                  placeholder='Portfolio URL'
+                />
+              </FormField>
+            </div>
+          </Card>
+        </div>
 
         <Card>
           <div className='mb-6 flex flex-wrap items-center justify-between gap-3'>
@@ -523,8 +591,10 @@ const ResumeBuilder = () => {
                   <button
                     type='button'
                     onClick={() => removeEducation(index)}
-                    className='text-sm text-error hover:underline'>
-                    Remove
+                    aria-label={`Delete education ${index + 1}`}
+                    title='Delete Education'
+                    className='flex items-center justify-center rounded-lg p-2 text-text-muted transition-colors hover:bg-error/10 hover:text-error'>
+                    <FaTrash size={14} />
                   </button>
                 </div>
 
@@ -648,8 +718,10 @@ const ResumeBuilder = () => {
                   <button
                     type='button'
                     onClick={() => removeExperience(index)}
-                    className='text-sm text-error hover:underline'>
-                    Remove
+                    aria-label={`Delete experience ${index + 1}`}
+                    title='Delete Experience'
+                    className='flex items-center justify-center rounded-lg p-2 text-text-muted transition-colors hover:bg-error/10 hover:text-error'>
+                    <FaTrash size={14} />
                   </button>
                 </div>
 
@@ -785,8 +857,10 @@ const ResumeBuilder = () => {
                   <button
                     type='button'
                     onClick={() => removeProject(index)}
-                    className='text-sm text-error hover:underline'>
-                    Remove
+                    aria-label={`Delete project ${index + 1}`}
+                    title='Delete Project'
+                    className='flex items-center justify-center rounded-lg p-2 text-text-muted transition-colors hover:bg-error/10 hover:text-error'>
+                    <FaTrash size={14} />
                   </button>
                 </div>
 

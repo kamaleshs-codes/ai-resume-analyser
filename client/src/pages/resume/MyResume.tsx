@@ -224,13 +224,14 @@ const MyResumes = () => {
               </div>
 
               {/* Last Updated */}
-              <div className='flex items-center gap-2 border-t border-border pt-4 text-xs text-text-muted'>
-                <FaCalendarAlt size={13} />
+              {/* Last Updated */}
+              {resume.updatedAt && (
+                <div className='flex items-center gap-2 border-t border-border pt-4 text-xs text-text-muted'>
+                  <FaCalendarAlt size={13} />
+                  <span>Updated {formatDate(resume.updatedAt)}</span>
+                </div>
+              )}
 
-                <span>Updated {formatDate(resume.updatedAt)}</span>
-              </div>
-
-              {/* Actions */}
               {/* Actions */}
               <div className='mt-auto flex flex-wrap gap-3'>
                 <Button
