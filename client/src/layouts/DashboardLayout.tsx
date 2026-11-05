@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/navbar/Navbar";
 
-const HomeLayout = () => {
+const DashboardLayout = () => {
   return (
     <div className='min-h-screen bg-background'>
       <Navbar />
@@ -12,4 +12,4 @@ const HomeLayout = () => {
   );
 };
 
-export default HomeLayout;
+export default DashboardLayout;
