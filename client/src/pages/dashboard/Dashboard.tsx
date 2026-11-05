@@ -1,5 +1,4 @@
 import { FaChartLine, FaFileAlt, FaFolderOpen, FaGlobe } from "react-icons/fa";
-
 import WelcomeBanner from "../../components/home/WelcomeBanner";
 import SectionTitle from "../../components/home/SectionTitle";
 import FeatureCard from "../../components/home/FeatureCard";

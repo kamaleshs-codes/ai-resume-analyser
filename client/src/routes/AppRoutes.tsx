@@ -3,8 +3,9 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "../pages/auth/AuthPage";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
-import HomeLayout from "../layouts/HomeLayout";
+import DashboardLayout from "../layouts/DashboardLayout";
 import Dashboard from "../pages/dashboard/Dashboard";
+import MyResumes from "../pages/resume/MyResume";
 
 const AppRoutes = () => {
   return (
@@ -28,12 +29,14 @@ const AppRoutes = () => {
       />
 
       <Route element={<ProtectedRoute />}>
-        <Route element={<HomeLayout />}>
+        <Route element={<DashboardLayout />}>
           <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/my-resumes' element={<MyResumes />} />
         </Route>
       </Route>
 
-      <Route path='/' element={<Navigate to='/home' replace />} />
+      <Route path='/' element={<Navigate to='/dashboard' replace />} />
+      <Route path='*' element={<Navigate to='/dashboard' replace />} />
     </Routes>
   );
 };
