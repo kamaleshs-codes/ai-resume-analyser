@@ -6,6 +6,7 @@ import PublicRoute from "./PublicRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Dashboard from "../pages/dashboard/Dashboard";
 import MyResumes from "../pages/resume/MyResume";
+import ResumeBuilder from "../pages/resume/ResumeBuilder";
 
 const AppRoutes = () => {
   return (
@@ -32,6 +33,8 @@ const AppRoutes = () => {
         <Route element={<DashboardLayout />}>
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/my-resumes' element={<MyResumes />} />
+          <Route path='/resume-builder' element={<ResumeBuilder />} />
+          <Route path='/resume-builder/:id' element={<ResumeBuilder />} />
         </Route>
       </Route>
 

@@ -1,19 +1,24 @@
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { FaFileAlt, FaTrash, FaCalendarAlt, FaSyncAlt } from "react-icons/fa";
-
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
-
 import { getUserResumesApi, deleteResumeApi } from "../../api/resume.api";
-
 import type { Resume } from "../../types/resume.types";
+import { useNavigate } from "react-router-dom";
+import {
+  FaFileAlt,
+  FaTrash,
+  FaCalendarAlt,
+  FaSyncAlt,
+  FaEdit,
+} from "react-icons/fa";
 
 const MyResumes = () => {
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   // Fetch all resumes belonging to the authenticated user
   const fetchResumes = useCallback(async () => {
@@ -226,15 +231,23 @@ const MyResumes = () => {
               </div>
 
               {/* Actions */}
-              <div className='mt-auto'>
+              {/* Actions */}
+              <div className='mt-auto flex flex-wrap gap-3'>
+                <Button
+                  type='button'
+                  onClick={() => navigate(`/resume-builder/${resume._id}`)}
+                  className='!w-fit min-w-[110px] flex-1 items-center justify-center gap-2'>
+                  <FaEdit size={13} />
+                  Edit
+                </Button>
+
                 <Button
                   type='button'
                   onClick={() => void handleDelete(resume._id)}
                   disabled={deletingId === resume._id}
-                  className='flex items-center justify-center gap-2 bg-error/10 text-error shadow-none hover:bg-error/20 hover:shadow-none disabled:cursor-not-allowed disabled:opacity-50'>
+                  className='!w-fit min-w-[110px] flex-1 items-center justify-center gap-2 bg-error/10 text-error shadow-none hover:bg-error/20 hover:shadow-none disabled:cursor-not-allowed disabled:opacity-50'>
                   <FaTrash size={13} />
-
-                  {deletingId === resume._id ? "Deleting..." : "Delete Resume"}
+                  {deletingId === resume._id ? "Deleting..." : "Delete"}
                 </Button>
               </div>
             </Card>
