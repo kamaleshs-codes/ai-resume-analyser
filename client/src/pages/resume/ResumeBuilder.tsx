@@ -7,6 +7,7 @@ import {
   FaArrowRight,
   FaTimes,
   FaTrash,
+  FaEye,
 } from "react-icons/fa";
 
 import Card from "../../components/ui/Card";
@@ -290,28 +291,35 @@ const ResumeBuilder = () => {
         education: formData.education
           .filter((item) => item.institution.trim() && item.degree.trim())
           .map((item) => ({
-            ...item,
             institution: item.institution.trim(),
             degree: item.degree.trim(),
+            fieldOfStudy: item.fieldOfStudy,
+            startDate: item.startDate,
+            endDate: item.endDate,
+            description: item.description,
           })),
 
         experience: formData.experience
           .filter((item) => item.company.trim() && item.position.trim())
           .map((item) => ({
-            ...item,
             company: item.company.trim(),
             position: item.position.trim(),
+            location: item.location,
+            startDate: item.startDate,
             endDate: item.currentlyWorking ? "" : item.endDate,
+            currentlyWorking: item.currentlyWorking,
+            description: item.description,
           })),
 
         projects: formData.projects
           .filter((item) => item.name.trim())
           .map((item) => ({
-            ...item,
             name: item.name.trim(),
+            description: item.description,
             technologies: item.technologies.filter((technology) =>
               technology.trim(),
             ),
+            projectUrl: item.projectUrl,
           })),
       };
 
@@ -933,11 +941,22 @@ const ResumeBuilder = () => {
           )}
         </Card>
 
-        <div className='flex justify-end'>
+        <div className='flex flex-wrap justify-end gap-3'>
+          {/* Preview Resume - Only for existing resumes */}
+          {id && (
+            <Button
+              type='button'
+              onClick={() => navigate(`/resume-preview/${id}`)}
+              className='!w-fit min-w-[150px] flex items-center justify-center gap-2'>
+              <FaEye />
+              Preview Resume
+            </Button>
+          )}
+          {/* Save / Update Resume */}
           <Button
             type='submit'
             disabled={saving}
-            className='flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50 sm:!w-fit sm:min-w-[160px]'>
+            className='!w-fit min-w-[160px] flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50'>
             <FaSave />
             {saving ? "Saving..." : id ? "Update Resume" : "Save Resume"}
           </Button>
