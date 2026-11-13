@@ -11,6 +11,7 @@ import {
   FaCalendarAlt,
   FaSyncAlt,
   FaEdit,
+  FaArrowLeft
 } from "react-icons/fa";
 
 const MyResumes = () => {
@@ -98,6 +99,15 @@ const MyResumes = () => {
 
   return (
     <section className='space-y-8'>
+      <div className='mb-6'>
+        <Button
+          type='button'
+          onClick={() => navigate("/home")}
+          className='!w-fit flex items-center justify-center gap-2'>
+          <FaArrowLeft />
+          Back to Dashboard
+        </Button>
+      </div>
       {/* Page Header */}
       <div className='flex w-full flex-col justify-between gap-4 sm:flex-row sm:items-center'>
         <div className=''>

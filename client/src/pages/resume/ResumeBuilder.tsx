@@ -1,12 +1,12 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import {
-  FaSave,
   FaArrowLeft,
   FaArrowRight,
   FaTimes,
   FaTrash,
+  FaEye,
 } from "react-icons/fa";
 
 import Card from "../../components/ui/Card";
@@ -14,11 +14,7 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import FormField from "../../components/ui/FormFields";
 
-import {
-  createResumeApi,
-  getResumeByIdApi,
-  updateResumeApi,
-} from "../../api/resume.api";
+import { getResumeByIdApi } from "../../api/resume.api";
 
 import type {
   CreateResumeRequest,
@@ -37,6 +33,33 @@ interface ResumeFormData {
   experience: ResumeExperience[];
   projects: ResumeProject[];
 }
+
+interface ResumeBuilderLocationState {
+  resumeData?: CreateResumeRequest;
+  resumeId?: string | null;
+}
+
+const mapResumeToFormData = (resume: CreateResumeRequest): ResumeFormData => ({
+  title: resume.title ?? "",
+  personalInfo: {
+    firstName: resume.personalInfo?.firstName ?? "",
+    lastName: resume.personalInfo?.lastName ?? "",
+    email: resume.personalInfo?.email ?? "",
+    phone: resume.personalInfo?.phone ?? "",
+    location: resume.personalInfo?.location ?? "",
+    linkedin: resume.personalInfo?.linkedin ?? "",
+    github: resume.personalInfo?.github ?? "",
+    website: resume.personalInfo?.website ?? "",
+  },
+  professionalSummary: resume.professionalSummary ?? "",
+  skills: [...(resume.skills ?? [])],
+  education: (resume.education ?? []).map((item) => ({ ...item })),
+  experience: (resume.experience ?? []).map((item) => ({ ...item })),
+  projects: (resume.projects ?? []).map((item) => ({
+    ...item,
+    technologies: [...(item.technologies ?? [])],
+  })),
+});
 
 const initialFormData: ResumeFormData = {
   title: "",
@@ -59,17 +82,30 @@ const initialFormData: ResumeFormData = {
 
 const ResumeBuilder = () => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const navigate = useNavigate();
+  const routeState = location.state as ResumeBuilderLocationState | null;
 
   const [formData, setFormData] = useState<ResumeFormData>(initialFormData);
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [skillInput, setSkillInput] = useState("");
 
-  // Load an existing resume when editing.
+  // Restore preview data first; otherwise load an existing resume from the API.
   useEffect(() => {
-    if (!id) return;
+    if (routeState?.resumeData) {
+      setFormData(mapResumeToFormData(routeState.resumeData));
+      setError("");
+      setLoading(false);
+      return;
+    }
+
+    if (!id) {
+      setFormData(initialFormData);
+      setError("");
+      setLoading(false);
+      return;
+    }
 
     const fetchResume = async () => {
       try {
@@ -77,25 +113,7 @@ const ResumeBuilder = () => {
         setError("");
 
         const resume = await getResumeByIdApi(id);
-
-        setFormData({
-          title: resume.title ?? "",
-          personalInfo: {
-            firstName: resume.personalInfo?.firstName ?? "",
-            lastName: resume.personalInfo?.lastName ?? "",
-            email: resume.personalInfo?.email ?? "",
-            phone: resume.personalInfo?.phone ?? "",
-            location: resume.personalInfo?.location ?? "",
-            linkedin: resume.personalInfo?.linkedin ?? "",
-            github: resume.personalInfo?.github ?? "",
-            website: resume.personalInfo?.website ?? "",
-          },
-          professionalSummary: resume.professionalSummary ?? "",
-          skills: resume.skills ?? [],
-          education: resume.education ?? [],
-          experience: resume.experience ?? [],
-          projects: resume.projects ?? [],
-        });
+        setFormData(mapResumeToFormData(resume));
       } catch (err) {
         setError(
           axios.isAxiosError(err)
@@ -108,7 +126,7 @@ const ResumeBuilder = () => {
     };
 
     void fetchResume();
-  }, [id]);
+  }, [id, routeState?.resumeData]);
 
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
@@ -273,64 +291,63 @@ const ResumeBuilder = () => {
     }));
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handlePreview = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
 
-    try {
-      setSaving(true);
-      setError("");
+    const resumeData: CreateResumeRequest = {
+      title: formData.title.trim(),
+      personalInfo: {
+        ...formData.personalInfo,
+        firstName: formData.personalInfo.firstName.trim(),
+        lastName: formData.personalInfo.lastName.trim(),
+        email: formData.personalInfo.email.trim(),
+      },
+      professionalSummary: formData.professionalSummary.trim(),
 
-      const resumeData: CreateResumeRequest = {
-        title: formData.title.trim(),
-        personalInfo: formData.personalInfo,
-        professionalSummary: formData.professionalSummary.trim(),
+      skills: formData.skills.map((skill) => skill.trim()).filter(Boolean),
 
-        skills: formData.skills.map((skill) => skill.trim()).filter(Boolean),
+      education: formData.education
+        .filter((item) => item.institution.trim() && item.degree.trim())
+        .map((item) => ({
+          institution: item.institution.trim(),
+          degree: item.degree.trim(),
+          fieldOfStudy: item.fieldOfStudy,
+          startDate: item.startDate,
+          endDate: item.endDate,
+          description: item.description,
+        })),
 
-        education: formData.education
-          .filter((item) => item.institution.trim() && item.degree.trim())
-          .map((item) => ({
-            ...item,
-            institution: item.institution.trim(),
-            degree: item.degree.trim(),
-          })),
+      experience: formData.experience
+        .filter((item) => item.company.trim() && item.position.trim())
+        .map((item) => ({
+          company: item.company.trim(),
+          position: item.position.trim(),
+          location: item.location,
+          startDate: item.startDate,
+          endDate: item.currentlyWorking ? "" : item.endDate,
+          currentlyWorking: item.currentlyWorking,
+          description: item.description,
+        })),
 
-        experience: formData.experience
-          .filter((item) => item.company.trim() && item.position.trim())
-          .map((item) => ({
-            ...item,
-            company: item.company.trim(),
-            position: item.position.trim(),
-            endDate: item.currentlyWorking ? "" : item.endDate,
-          })),
+      projects: formData.projects
+        .filter((item) => item.name.trim())
+        .map((item) => ({
+          name: item.name.trim(),
+          description: item.description,
+          technologies: item.technologies
+            .map((technology) => technology.trim())
+            .filter(Boolean),
+          projectUrl: item.projectUrl,
+        })),
+    };
 
-        projects: formData.projects
-          .filter((item) => item.name.trim())
-          .map((item) => ({
-            ...item,
-            name: item.name.trim(),
-            technologies: item.technologies.filter((technology) =>
-              technology.trim(),
-            ),
-          })),
-      };
-
-      if (id) {
-        await updateResumeApi(id, resumeData);
-      } else {
-        await createResumeApi(resumeData);
-      }
-
-      navigate("/my-resumes");
-    } catch (err) {
-      setError(
-        axios.isAxiosError(err)
-          ? err.response?.data?.message || "Unable to save resume."
-          : "Something went wrong while saving the resume.",
-      );
-    } finally {
-      setSaving(false);
-    }
+    navigate(id ? `/resume-preview/${id}` : "/resume-preview/new", {
+      state: {
+        resumeData,
+        resumeId: id ?? null,
+      },
+    });
   };
 
   if (loading) {
@@ -343,23 +360,33 @@ const ResumeBuilder = () => {
 
   return (
     <div className='space-y-8'>
-      <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-center'>
-        <div>
-          <h1 className='text-3xl font-bold text-text'>
-            {id ? "Edit Resume" : "Create Resume"}
-          </h1>
-          <p className='mt-2 text-text-muted'>
-            Enter your professional details to build your resume.
-          </p>
-        </div>
-
+      <div className='mb-6'>
         <Button
           type='button'
-          onClick={() => navigate("/my-resumes")}
+          onClick={() => navigate("/home")}
           className='!w-fit flex items-center justify-center gap-2'>
           <FaArrowLeft />
-          Back to Resumes
+          Back to Dashboard
         </Button>
+      </div>
+      <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-center'>
+        <div className='flex w-full items-start justify-between'>
+          <div>
+            <h1 className='text-3xl font-bold text-text'>
+              {id ? "Edit Resume" : "Create Resume"}
+            </h1>
+            <p className='mt-2 text-text-muted'>
+              Enter your professional details to build your resume.
+            </p>
+          </div>
+          <Button
+            type='button'
+            onClick={() => navigate("/my-resumes")}
+            className='!w-fit flex items-center justify-center gap-2'>
+            <FaArrowLeft size={13} />
+            <span>Back to Resumes</span>
+          </Button>
+        </div>
       </div>
 
       {error && (
@@ -368,7 +395,7 @@ const ResumeBuilder = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className='space-y-8'>
+      <form onSubmit={handlePreview} className='space-y-8'>
         {/* Top Form Layout */}
         <div className='grid grid-cols-1 items-start gap-6 lg:grid-cols-2'>
           {/* LEFT COLUMN */}
@@ -933,15 +960,12 @@ const ResumeBuilder = () => {
           )}
         </Card>
 
-        <div className='flex justify-end'>
-          <Button
-            type='submit'
-            disabled={saving}
-            className='flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50 sm:!w-fit sm:min-w-[160px]'>
-            <FaSave />
-            {saving ? "Saving..." : id ? "Update Resume" : "Save Resume"}
-          </Button>
-        </div>
+        <Button
+          type='submit'
+          className='!w-fit min-w-[150px] flex items-center justify-center gap-2'>
+          <FaEye />
+          Preview Resume
+        </Button>
       </form>
     </div>
   );

@@ -1,4 +1,6 @@
+import { useNavigate } from "react-router-dom";
 import { FaChartLine, FaFileAlt, FaFolderOpen, FaGlobe } from "react-icons/fa";
+
 import WelcomeBanner from "../../components/home/WelcomeBanner";
 import SectionTitle from "../../components/home/SectionTitle";
 import FeatureCard from "../../components/home/FeatureCard";
@@ -6,6 +8,8 @@ import StatsCard from "../../components/home/StatsCard";
 import RecentActivity from "../../components/home/RecentActivity";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
   const activities = [
     {
       id: 1,
@@ -44,7 +48,7 @@ const Dashboard = () => {
           description='Create professional ATS-friendly resumes with AI assistance.'
           icon={<FaFileAlt size={26} />}
           buttonText='Open Builder'
-          onClick={() => {}}
+          onClick={() => navigate("/resume-builder")}
         />
 
         <FeatureCard
@@ -68,7 +72,7 @@ const Dashboard = () => {
           description='Manage, edit and download all of your saved resumes.'
           icon={<FaFolderOpen size={26} />}
           buttonText='View Resumes'
-          onClick={() => {}}
+          onClick={() => navigate("/my-resumes")}
         />
       </div>
 
