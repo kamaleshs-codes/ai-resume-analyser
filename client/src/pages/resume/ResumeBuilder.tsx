@@ -1,5 +1,5 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import {
   FaArrowLeft,
@@ -34,6 +34,33 @@ interface ResumeFormData {
   projects: ResumeProject[];
 }
 
+interface ResumeBuilderLocationState {
+  resumeData?: CreateResumeRequest;
+  resumeId?: string | null;
+}
+
+const mapResumeToFormData = (resume: CreateResumeRequest): ResumeFormData => ({
+  title: resume.title ?? "",
+  personalInfo: {
+    firstName: resume.personalInfo?.firstName ?? "",
+    lastName: resume.personalInfo?.lastName ?? "",
+    email: resume.personalInfo?.email ?? "",
+    phone: resume.personalInfo?.phone ?? "",
+    location: resume.personalInfo?.location ?? "",
+    linkedin: resume.personalInfo?.linkedin ?? "",
+    github: resume.personalInfo?.github ?? "",
+    website: resume.personalInfo?.website ?? "",
+  },
+  professionalSummary: resume.professionalSummary ?? "",
+  skills: [...(resume.skills ?? [])],
+  education: (resume.education ?? []).map((item) => ({ ...item })),
+  experience: (resume.experience ?? []).map((item) => ({ ...item })),
+  projects: (resume.projects ?? []).map((item) => ({
+    ...item,
+    technologies: [...(item.technologies ?? [])],
+  })),
+});
+
 const initialFormData: ResumeFormData = {
   title: "",
   personalInfo: {
@@ -55,16 +82,30 @@ const initialFormData: ResumeFormData = {
 
 const ResumeBuilder = () => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const navigate = useNavigate();
+  const routeState = location.state as ResumeBuilderLocationState | null;
 
   const [formData, setFormData] = useState<ResumeFormData>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [skillInput, setSkillInput] = useState("");
 
-  // Load an existing resume when editing.
+  // Restore preview data first; otherwise load an existing resume from the API.
   useEffect(() => {
-    if (!id) return;
+    if (routeState?.resumeData) {
+      setFormData(mapResumeToFormData(routeState.resumeData));
+      setError("");
+      setLoading(false);
+      return;
+    }
+
+    if (!id) {
+      setFormData(initialFormData);
+      setError("");
+      setLoading(false);
+      return;
+    }
 
     const fetchResume = async () => {
       try {
@@ -72,25 +113,7 @@ const ResumeBuilder = () => {
         setError("");
 
         const resume = await getResumeByIdApi(id);
-
-        setFormData({
-          title: resume.title ?? "",
-          personalInfo: {
-            firstName: resume.personalInfo?.firstName ?? "",
-            lastName: resume.personalInfo?.lastName ?? "",
-            email: resume.personalInfo?.email ?? "",
-            phone: resume.personalInfo?.phone ?? "",
-            location: resume.personalInfo?.location ?? "",
-            linkedin: resume.personalInfo?.linkedin ?? "",
-            github: resume.personalInfo?.github ?? "",
-            website: resume.personalInfo?.website ?? "",
-          },
-          professionalSummary: resume.professionalSummary ?? "",
-          skills: resume.skills ?? [],
-          education: resume.education ?? [],
-          experience: resume.experience ?? [],
-          projects: resume.projects ?? [],
-        });
+        setFormData(mapResumeToFormData(resume));
       } catch (err) {
         setError(
           axios.isAxiosError(err)
@@ -103,7 +126,7 @@ const ResumeBuilder = () => {
     };
 
     void fetchResume();
-  }, [id]);
+  }, [id, routeState?.resumeData]);
 
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
@@ -337,8 +360,17 @@ const ResumeBuilder = () => {
 
   return (
     <div className='space-y-8'>
+      <div className='mb-6'>
+        <Button
+          type='button'
+          onClick={() => navigate("/home")}
+          className='!w-fit flex items-center justify-center gap-2'>
+          <FaArrowLeft />
+          Back to Dashboard
+        </Button>
+      </div>
       <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-center'>
-        <div className='flex w-full justify-between'>
+        <div className='flex w-full items-start justify-between'>
           <div>
             <h1 className='text-3xl font-bold text-text'>
               {id ? "Edit Resume" : "Create Resume"}
@@ -351,8 +383,8 @@ const ResumeBuilder = () => {
             type='button'
             onClick={() => navigate("/my-resumes")}
             className='!w-fit flex items-center justify-center gap-2'>
-            <FaArrowLeft />
-            Back to Resumes
+            <FaArrowLeft size={13} />
+            <span>Back to Resumes</span>
           </Button>
         </div>
       </div>
