@@ -1,5 +1,12 @@
 import { z } from "zod";
 
+const resumeTemplateSchema = z.enum([
+  "classic",
+  "modern",
+  "professional",
+  "minimal",
+]);
+
 const personalInfoSchema = z.strictObject({
   firstName: z.string().trim().min(1, "First name is required"),
   lastName: z.string().trim().min(1, "Last name is required"),
@@ -45,7 +52,7 @@ export const createResumeSchema = z.strictObject({
   education: z.array(educationSchema).default([]),
   experience: z.array(experienceSchema).default([]),
   projects: z.array(projectSchema).default([]),
-  template: z.string().trim().default("professional"),
+  template: resumeTemplateSchema.default("classic"),
 });
 
 export const updateResumeSchema = z.strictObject({
@@ -56,7 +63,7 @@ export const updateResumeSchema = z.strictObject({
   education: z.array(educationSchema).optional(),
   experience: z.array(experienceSchema).optional(),
   projects: z.array(projectSchema).optional(),
-  template: z.string().trim().optional(),
+  template: resumeTemplateSchema.optional(),
 });
 
 export type CreateResumeInput = z.infer<typeof createResumeSchema>;

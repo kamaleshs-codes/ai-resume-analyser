@@ -81,7 +81,8 @@ const resumeSchema = new Schema<IResume>(
 
     template: {
       type: String,
-      default: "professional",
+      enum: ["classic", "modern", "professional", "minimal"],
+      default: "classic",
       trim: true,
     },
   },

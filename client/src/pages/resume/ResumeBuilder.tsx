@@ -24,8 +24,14 @@ import type {
   ResumeProject,
 } from "../../types/resume.types";
 
+import {
+  DEFAULT_RESUME_TEMPLATE,
+  getResumeTemplate,
+} from "../../constants/resumeTemplates";
+
 interface ResumeFormData {
   title: string;
+  template: string;
   personalInfo: ResumePersonalInfo;
   professionalSummary: string;
   skills: string[];
@@ -37,10 +43,12 @@ interface ResumeFormData {
 interface ResumeBuilderLocationState {
   resumeData?: CreateResumeRequest;
   resumeId?: string | null;
+  selectedTemplate?: string;
 }
 
 const mapResumeToFormData = (resume: CreateResumeRequest): ResumeFormData => ({
   title: resume.title ?? "",
+  template: getResumeTemplate(resume.template).id,
   personalInfo: {
     firstName: resume.personalInfo?.firstName ?? "",
     lastName: resume.personalInfo?.lastName ?? "",
@@ -63,6 +71,7 @@ const mapResumeToFormData = (resume: CreateResumeRequest): ResumeFormData => ({
 
 const initialFormData: ResumeFormData = {
   title: "",
+  template: DEFAULT_RESUME_TEMPLATE,
   personalInfo: {
     firstName: "",
     lastName: "",
@@ -101,7 +110,10 @@ const ResumeBuilder = () => {
     }
 
     if (!id) {
-      setFormData(initialFormData);
+      setFormData({
+        ...initialFormData,
+        template: getResumeTemplate(routeState?.selectedTemplate).id,
+      });
       setError("");
       setLoading(false);
       return;
@@ -126,7 +138,7 @@ const ResumeBuilder = () => {
     };
 
     void fetchResume();
-  }, [id, routeState?.resumeData]);
+  }, [id, routeState?.resumeData, routeState?.selectedTemplate]);
 
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
@@ -297,6 +309,7 @@ const ResumeBuilder = () => {
 
     const resumeData: CreateResumeRequest = {
       title: formData.title.trim(),
+      template: formData.template,
       personalInfo: {
         ...formData.personalInfo,
         firstName: formData.personalInfo.firstName.trim(),
@@ -363,7 +376,7 @@ const ResumeBuilder = () => {
       <div className='mb-6'>
         <Button
           type='button'
-          onClick={() => navigate("/home")}
+          onClick={() => navigate("/dashboard")}
           className='!w-fit flex items-center justify-center gap-2'>
           <FaArrowLeft />
           Back to Dashboard
