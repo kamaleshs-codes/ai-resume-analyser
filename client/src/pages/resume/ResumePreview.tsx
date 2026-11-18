@@ -249,7 +249,6 @@ const ResumePreview = () => {
       )}
 
       {/* Resume Document */}
-      {/* Resume Document */}
       <div className='mx-auto w-full max-w-[850px] overflow-hidden rounded-lg bg-white shadow-xl'>
         <ResumeTemplateRenderer resume={resume} />
       </div>
