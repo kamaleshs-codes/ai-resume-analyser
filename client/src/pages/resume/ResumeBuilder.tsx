@@ -377,9 +377,11 @@ const ResumeBuilder = () => {
         <Button
           type='button'
           onClick={() => navigate("/dashboard")}
-          className='!w-fit flex items-center justify-center gap-2'>
-          <FaArrowLeft />
-          Back to Dashboard
+          className='!w-fit !bg-transparent !px-0 !py-0 !text-sm !text-text-muted !shadow-none hover:!bg-transparent hover:!translate-y-0 hover:!text-text active:!scale-100'>
+          <span className='flex items-center gap-2'>
+            <FaArrowLeft size={12} />
+            Back to Dashboard
+          </span>
         </Button>
       </div>
       <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-center'>
@@ -396,8 +398,7 @@ const ResumeBuilder = () => {
             type='button'
             onClick={() => navigate("/my-resumes")}
             className='!w-fit flex items-center justify-center gap-2'>
-            <FaArrowLeft size={13} />
-            <span>Back to Resumes</span>
+            <span>View my Resumes</span>
           </Button>
         </div>
       </div>

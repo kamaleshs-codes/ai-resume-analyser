@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { FaChartLine, FaFileAlt, FaFolderOpen, FaGlobe } from "react-icons/fa";
 
-import WelcomeBanner from "../../components/home/WelcomeBanner";
-import SectionTitle from "../../components/home/SectionTitle";
-import FeatureCard from "../../components/home/FeatureCard";
+import WelcomeBanner from "../../components/dashboard/WelcomeBanner";
+import SectionTitle from "../../components/dashboard/SectionTitle";
+import FeatureCard from "../../components/dashboard/FeatureCard";
 import resumeTemplatesImage from "../../assets/images/resumetemplates.png";
-import StatsCard from "../../components/home/StatsCard";
-import RecentActivity from "../../components/home/RecentActivity";
+import StatsCard from "../../components/dashboard/StatsCard";
+import RecentActivity from "../../components/dashboard/RecentActivity";
 import Button from "../../components/ui/Button";
 
 const Dashboard = () => {
@@ -84,7 +84,7 @@ const Dashboard = () => {
           {/* Left Content - 60% */}
           <div className='z-10 flex w-full flex-col items-start justify-center px-6 py-8 sm:px-10 lg:w-[60%]'>
             <div className='flex items-center gap-4'>
-              <div className='flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary shadow-glow'>
+              <div className='flex h-12 w-12 items-center justify-center rounded-xl border border-secondary/20 bg-secondary/10 text-secondary'>
                 <FaFileAlt size={24} />
               </div>
 
@@ -100,9 +100,8 @@ const Dashboard = () => {
 
             <Button
               onClick={() => navigate("/resume-templates")}
-              className='!w-fit mt-6 flex items-center gap-3 px-6 py-3 text-sm'>
+              className='!w-fit mt-6 flex items-center gap-3 px-6 py-3'>
               Browse Templates
-              <span className='text-lg'>→</span>
             </Button>
 
             <div className='mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-text-muted sm:text-sm'>
@@ -133,42 +132,41 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Statistics */}
-      <div className='mt-12'>
-        <SectionTitle
-          title='Statistics'
-          description='A quick overview of your ResumePilot AI activity.'
-        />
-
-        <div className='grid gap-6 md:grid-cols-3'>
-          <StatsCard
-            title='Resumes Created'
-            value={5}
-            icon={<FaFileAlt size={24} />}
+      {/* Statistics and Recent Activity */}
+      <div className='mt-12 flex justify-between'>
+        {/* Left Column - Statistics */}
+        <div className='w-1/3'>
+          <SectionTitle
+            title='Statistics'
+            description='A quick overview of your ResumePilot AI activity.'
           />
-
-          <StatsCard
-            title='ATS Analyses'
-            value={8}
-            icon={<FaChartLine size={24} />}
-          />
-
-          <StatsCard
-            title='Portfolio Sites'
-            value={2}
-            icon={<FaGlobe size={24} />}
-          />
+          <div className='flex flex-col gap-5'>
+            <StatsCard
+              title='Resumes Created'
+              value={5}
+              icon={<FaFileAlt size={24} />}
+            />
+            <StatsCard
+              title='ATS Analyses'
+              value={8}
+              icon={<FaChartLine size={24} />}
+            />
+            <StatsCard
+              title='Portfolio Sites'
+              value={2}
+              icon={<FaGlobe size={24} />}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Recent Activity */}
-      <div className='mt-12'>
-        <SectionTitle
-          title='Recent Activity'
-          description='Your latest activities in ResumePilot AI.'
-        />
-
-        <RecentActivity activities={activities} />
+        {/* Right Column - Recent Activity */}
+        <div className='w-1/2'>
+          <SectionTitle
+            title='Recent Activity'
+            description='Your latest activities in ResumePilot AI.'
+          />
+          <RecentActivity activities={activities} />
+        </div>
       </div>
     </>
   );

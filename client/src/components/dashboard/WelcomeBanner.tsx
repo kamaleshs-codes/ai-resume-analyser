@@ -5,7 +5,7 @@ const WelcomeBanner = () => {
   const { user } = useAuth();
 
   return (
-    <Card shadow='inner' className='mx-auto mb-10 w-full'>
+    <Card shadow="none" className='mx-auto mb-7 w-full border-none bg-transparent'>
       <div className='space-y-4'>
         <h1 className='text-4xl font-bold text-secondary'>
           Welcome back,{" "}
@@ -15,7 +15,7 @@ const WelcomeBanner = () => {
           👋
         </h1>
 
-        <p className='text-xl leading-7 text-text'>
+        <p className='text-xl mt-7 leading-8 text-text'>
           Welcome to ResumePilot AI. Build ATS-friendly resumes, analyze your
           resume, generate professional portfolios, and manage all your career
           documents from one place.
