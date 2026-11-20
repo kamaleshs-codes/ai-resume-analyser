@@ -8,8 +8,8 @@
   /* ========= Brand Colors ========= */
 
   /* Deep Blue (Brand) */
-  --color-primary: #00fff7;
-  --color-secondary: #b3ff00;
+  --color-primary: #3ac1ff;
+  --color-secondary: #ff00bf;
 
   /* Electric Purple (CTA & Actions) */
   --color-accent: #f588ff;
@@ -18,20 +18,24 @@
   /* ========= Layout ========= */
 
   /* Entire application background */
-  --color-background: #0b0b25;
+  --color-background: #030320;
 
   /* Header Surface background */
-  --color-surface: #180c3b;
+  --color-surface: #310032;
 
   /* Cards, forms, resume preview */
+<<<<<<< HEAD
   --color-canvas: #16161c;
+=======
+  --color-canvas: #16161b;
+>>>>>>> resume-builder
 
   /* ========= Typography ========= */
 
-  --color-text: #cdf7ef;
+  --color-text: #ffabf2;
 
   /* Secondary text */
-  --color-text-muted: #6fb7ff;
+  --color-text-muted: #a1b4c6;
 
   /* Button inner-text */
   --color-text-btn: #1c0011;

@@ -11,7 +11,7 @@ import {
   FaCalendarAlt,
   FaSyncAlt,
   FaEdit,
-  FaArrowLeft
+  FaArrowLeft,
 } from "react-icons/fa";
 
 const MyResumes = () => {
@@ -102,10 +102,12 @@ const MyResumes = () => {
       <div className='mb-6'>
         <Button
           type='button'
-          onClick={() => navigate("/home")}
-          className='!w-fit flex items-center justify-center gap-2'>
-          <FaArrowLeft />
-          Back to Dashboard
+          onClick={() => navigate("/dashboard")}
+          className='!w-fit !bg-transparent !px-0 !py-0 !text-sm !text-text-muted !shadow-none hover:!bg-transparent hover:!translate-y-0 hover:!text-text active:!scale-100'>
+          <span className='flex items-center gap-2'>
+            <FaArrowLeft size={12} />
+            Back to Dashboard
+          </span>
         </Button>
       </div>
       {/* Page Header */}
